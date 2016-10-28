@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.universal.provider.message.mapper.SmsMapper">
+
+	<insert id="insertSms" useGeneratedKeys="true" keyProperty="id" parameterType="com.universal.provider.message.entity.Sms">
+		INSERT INTO t_sms (
+		`from`,
+		`to`,
+		content,
+		`status`,
+		create_time,
+		update_time,
+		`ip`
+		)
+		VALUES
+		(
+		#{from}, #{to}, #{content},#{status},now(), now(),
+		#{ip})
+	</insert>
+
+	<select id="findQuantityToday" resultType="java.lang.Integer">
+		select count(1) from t_sms where `to` = #{to} and content =
+		#{content} and create_time between
+		CONCAT(CURRENT_DATE(), ' 00:00:00') and CONCAT(CURRENT_DATE(), ' 23:59:59')
+	</select>
+
+	<select id="findSuccessedQuantityToday" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		t_sms_log l
+		LEFT JOIN t_sms s ON l.SMS_ID
+		= s.ID
+		WHERE
+		s.`to` = #{to} and
+		s.content = #{content} and l.`status` =
+		'SNT'
+		AND l.channel = #{channel} and s.create_time
+		between
+		CONCAT(CURRENT_DATE(), ' 00:00:00') and
+		CONCAT(CURRENT_DATE(), ' 23:59:59')
+	</select>
+
+	<insert id="insertLog">
+		insert into t_sms_log (`sms_id`, `status`, channel, create_time) values(#{smsId}, #{status},
+		#{channel}, now())
+	</insert>
+
+	<update id="updateSms">
+		update t_sms set `status` = #{status}, channel = #{channel}, update_time=now() where id = #{smsId}
+	</update>
+
+</mapper>

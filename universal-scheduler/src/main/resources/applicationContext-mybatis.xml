@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<context:property-placeholder location="classpath:datasource.properties" ignore-unresolvable="true" />
+
+	<aop:aspectj-autoproxy />
+	<bean id="dataSourceAspect" class="com.nmtx.support.aspect.DataSourceAspect">
+		<property name="defaultDataSource" value="mysqlErpDataSource" />
+	</bean>
+	<aop:config>
+		<aop:aspect ref="dataSourceAspect">
+			<aop:pointcut id="dataSourcePointCut" expression="execution(* com.nmtx.scheduler.mapper.*.*(..)) or execution(* com.nmtx.scheduler.msql.mapper.*.*(..))" />
+			<aop:before pointcut-ref="dataSourcePointCut" method="before" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="dynamicDataSource" class="com.nmtx.support.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="mysqlErpDataSource" value-ref="mysqlErpDataSource" />
+				<entry key="mysqlSpuDataSource" value-ref="mysqlSpuDataSource" />
+				<entry key="mysqlOnlDataSource" value-ref="mysqlOnlDataSource" />
+				<entry key="mysqlMsgDataSource" value-ref="mysqlMsgDataSource" />
+				<entry key="sqlserverDataSource" value-ref="sqlserverDataSource" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="mysqlErpDataSource" />
+	</bean>
+
+	<bean id="mysqlErpDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${mysql.erp.jdbc.url}" />
+		<property name="username" value="${mysql.erp.jdbc.username}" />
+		<property name="password" value="${mysql.erp.jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="filters" value="stat,slf4j" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="connectionInitSqls" value="set names utf8mb4;"/>
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=1000" />
+	</bean>
+
+	<bean id="mysqlSpuDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${mysql.spu.jdbc.url}" />
+		<property name="username" value="${mysql.spu.jdbc.username}" />
+		<property name="password" value="${mysql.spu.jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="filters" value="stat,slf4j" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="connectionInitSqls" value="set names utf8mb4;"/>
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=1000" />
+	</bean>
+	
+	<bean id="mysqlOnlDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${mysql.onl.jdbc.url}" />
+		<property name="username" value="${mysql.onl.jdbc.username}" />
+		<property name="password" value="${mysql.onl.jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="filters" value="stat,slf4j" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="connectionInitSqls" value="set names utf8mb4;"/>
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=1000" />
+	</bean>
+
+	<bean id="mysqlMsgDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${mysql.msg.jdbc.url}" />
+		<property name="username" value="${mysql.msg.jdbc.username}" />
+		<property name="password" value="${mysql.msg.jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="filters" value="stat,slf4j" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="connectionInitSqls" value="set names utf8mb4;"/>
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=1000" />
+	</bean>
+
+	<bean id="sqlserverDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+		<property name="url" value="${mssql.jdbc.url}" />
+		<property name="username" value="${mssql.jdbc.username}" />
+		<property name="password" value="${mssql.jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="20" />
+		<property name="minIdle" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="filters" value="stat,slf4j" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="connectionProperties" value="druid.stat.slowSqlMillis=1000" />
+	</bean>
+
+	<bean id="dynamicSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dynamicDataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath*:com/nmtx/scheduler/**/mapper/xml/*.xml" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dynamicDataSource"></property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="dynamicSessionFactory" />
+		<property name="basePackage" value="com.nmtx.scheduler.**.mapper" />
+	</bean>
+
+</beans>

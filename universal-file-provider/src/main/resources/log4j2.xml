@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration packages="com.aliyun.openservices.log.log4j">
+
+	<Properties>
+		<Property name="log.file.name">/workspace/logs/file-provider</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout charset="UTF-8" pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS} %5p] [%t] [%c{2}] - %m%n" />
+		</Console>
+		<RollingFile name="FILE" fileName="${log.file.name}.log" filePattern="${log.file.name}.%d{yyyy-MM-dd}.log">
+			<PatternLayout charset="UTF-8" pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS} %5p] [%t] [%c{2}] - %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+		</RollingFile>
+
+		<Loghub name="LOGHUB" projectName="universal-log" logstore="${project.artifactId}" endpoint="universal-log.cn-shenzhen-intranet.log.aliyuncs.com" accessKeyId="k1FmCayHBteCfIet"
+			accessKey="mV5jKxgJIDjf4SPcFRuA2RBS7u3AHY" timeZone="GMT+8" timeFormat="yyyy-MM-dd HH:mm:ss,SSS">
+			<PatternLayout charset="UTF-8" pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p] [%t] [%2c] - %msg%n" />
+		</Loghub>
+	</Appenders>
+
+	<Loggers>
+		<AsyncLogger name="com.universal.provider.file" level="INFO" />
+		<AsyncRoot level="WARN">
+			<AppenderRef ref="FILE" />${mvn.log.appenders}
+		</AsyncRoot>
+	</Loggers>
+</Configuration>  

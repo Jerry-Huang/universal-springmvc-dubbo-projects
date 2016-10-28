@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:property-placeholder location="classpath:sms.properties" ignore-unresolvable="true" />
+
+	<bean id="smsHandler" class="com.universal.provider.message.sms.handler.SmsMultipleChannelHandler">
+		<constructor-arg index="0">
+			<map>
+				<entry key="P1">
+					<ref bean="smsDayuSender" />
+				</entry>
+				<entry key="P2">
+					<ref bean="sms33e9Sender" />
+				</entry>
+				<entry key="P3">
+					<ref bean="smsYunxinSender" />
+				</entry>
+			</map>
+		</constructor-arg>
+		<property name="maxSendingTimes" value="${sms.max.sending.times}" />
+	</bean>
+
+	<bean id="smsDayuSender" class="com.universal.provider.message.sms.sender.dayu.SmsDayuSender" init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="${sms.dayu.url}" />
+		<constructor-arg index="1" value="${sms.dayu.appkey}" />
+		<constructor-arg index="2" value="${sms.dayu.secret}" />
+		<property name="reporter" ref="smsDayuReporter" />
+		<property name="maxSendingTimes" value="${sms.dayu.max.sending.times}" />
+	</bean>
+	<bean id="smsDayuReporter" class="com.universal.provider.message.sms.sender.dayu.SmsDayuReporter">
+		<property name="failedHander" ref="sms33e9Sender" />
+		<property name="appkey" value="${sms.dayu.appkey}" />
+		<property name="secret" value="${sms.dayu.secret}" />
+	</bean>
+
+	<bean id="sms33e9Sender" class="com.universal.provider.message.sms.sender.sse9.Sms33e9Sender" init-method="start" destroy-method="stop">
+		<property name="reporter" ref="sms33e9Reporter" />
+		<property name="maxSendingTimes" value="${sms.33e9.max.sending.times}" />
+	</bean>
+	<bean id="sms33e9Reporter" class="com.universal.provider.message.sms.sender.sse9.Sms33e9Reporter">
+		<property name="failedHander" ref="smsYunxinSender" />
+	</bean>
+
+	<bean id="smsYunxinSender" class="com.universal.provider.message.sms.sender.yunxin.SmsYunxinSender" init-method="start" destroy-method="stop">
+		<constructor-arg index="0" value="${sms.yunxin.url}" />
+		<constructor-arg index="1" value="${sms.yunxin.account}" />
+		<constructor-arg index="2" value="${sms.yunxin.password}" />
+		<property name="reporter" ref="smsYunxinReporter" />
+		<property name="maxSendingTimes" value="${sms.yunxin.max.sending.times}" />
+	</bean>
+	<bean id="smsYunxinReporter" class="com.universal.provider.message.sms.sender.yunxin.SmsYunxinReporter" />
+
+</beans>

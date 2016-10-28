@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.universal.provider.user.mapper.UserMapper">
+
+	<select id="find" resultType="com.universal.api.user.bean.UserBean">
+		SELECT
+		`ID`,
+		`PARENT_ID`,
+		`USER_NAME`,
+		`PASSWORD`,
+		`LINK_NAME`,
+		`TYPE`,
+		`STATUS`,
+		`FACE`,
+		`EMAIL`,
+		`SEX`,
+		`PHONE`,
+		`ADDRESS`,
+		`DISTRICT_CODE`,
+		`CRM_CODE`,
+		`CREATE_TIME`,
+		`UPDATE_TIME`
+		FROM
+		T_USER
+		<where>
+			<if test="id != null and id > 0">
+				`ID` = #{id}
+			</if>
+			<if test="userName != null">
+				AND `USER_NAME` = #{userName}
+			</if>
+			<if test="phone != null">
+				AND `PHONE` = #{phone}
+			</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
+
+	<cache:annotation-driven cache-manager="cacheManager" />
+	<context:component-scan base-package="com.universal.web" />
+
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:domain.properties" />
+
+	<mvc:view-controller path="/" view-name="/index.html" />
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.universal.json.ObjectMapper" />
+				</property>
+			</bean>
+		</mvc:message-converters>
+		<mvc:argument-resolvers>
+			<bean class="com.universal.web.support.resolver.ApiRequestMethodArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean id="validationInterceptor" class="com.universal.web.support.interceptor.ValidationInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/views/" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="auto_import">spring.ftl as spring</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="output_encoding">UTF-8</prop>
+			</props>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="order" value="1" />
+		<property name="cache" value="true" />
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html; charset=utf-8" />
+	</bean>
+
+</beans>

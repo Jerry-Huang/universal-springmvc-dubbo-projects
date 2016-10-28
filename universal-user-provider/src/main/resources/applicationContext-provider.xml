@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd         
+	http://code.alibabatech.com/schema/dubbo         
+	http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:property-placeholder location="classpath:dubbox.properties" ignore-unresolvable="true" />
+
+	<dubbo:application name="universal-user-provider" environment="${dubbo.application.environment}" logger="slf4j" />
+
+	<dubbo:protocol name="dubbo" port="${dubbo.protocol.port}">
+		<dubbo:parameter key="shutdown.timeout" value="${dubbo.shutdown.timeout}" />
+	</dubbo:protocol>
+
+	<!-- 本地调试通过修改 address="N/A" -->
+	<!-- <dubbo:registry address="N/A" /> -->
+	<dubbo:registry address="${dubbo.registry.address}" timeout="${dubbo.registry.timeout}" />
+
+	<dubbo:provider protocol="dubbo" payload="11048576" timeout="${dubbo.provider.timeout}" loadbalance="roundrobin" />
+
+	<dubbo:service interface="com.universal.api.user.service.UserService" ref="userService" />
+
+</beans>
