@@ -17,8 +17,8 @@
 			</Policies>
 		</RollingFile>
 
-		<Loghub name="LOGHUB" projectName="universal-log" logstore="${project.artifactId}" endpoint="universal-log.cn-shenzhen-intranet.log.aliyuncs.com" accessKeyId="k1FmCayHBteCfIet"
-			accessKey="mV5jKxgJIDjf4SPcFRuA2RBS7u3AHY" timeZone="GMT+8" timeFormat="yyyy-MM-dd HH:mm:ss,SSS">
+		<Loghub name="LOGHUB" projectName="universal-log" logstore="${project.artifactId}" endpoint="universal-log.cn-shenzhen-intranet.log.aliyuncs.com" accessKeyId="xxxxxxxxxxx"
+			accessKey="xxxxxxxxxxx" timeZone="GMT+8" timeFormat="yyyy-MM-dd HH:mm:ss,SSS">
 			<PatternLayout charset="UTF-8" pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p] [%t] [%2c] - %msg%n" />
 		</Loghub>
 	</Appenders>
